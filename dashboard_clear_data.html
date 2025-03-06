@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tier 1 AI Agents - Core Insights</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: #e0e0e0;
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .dashboard {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(27, 38, 59, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(69, 123, 157, 0.2);
+            border: 1px solid rgba(69, 123, 157, 0.3);
+        }
+        .header {
+            text-align: center;
+            font-size: 34px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #48cae4, #90e0ef);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 30px;
+            text-shadow: 0 0 12px rgba(72, 202, 228, 0.5);
+        }
+        .time-range {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            font-size: 14px;
+            color: #b0c4de;
+            background: rgba(46, 64, 87, 0.8);
+            padding: 8px 16px;
+            border-radius: 25px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 35px;
+            justify-content: center;
+        }
+        .panel {
+            background: linear-gradient(145deg, #2e4057, #415a77);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4), -5px -5px 15px rgba(69, 123, 157, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        .panel:hover {
+            transform: translateY(-10px);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.5), -8px -8px 20px rgba(69, 123, 157, 0.2);
+        }
+        .stat-panel {
+            width: 240px;
+            height: 180px; /* Increased height for descriptions */
+        }
+        .gauge-panel {
+            width: 320px;
+            height: 280px; /* Increased height for clarity */
+        }
+        .title {
+            font-size: 16px;
+            color: #b0c4de;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .value {
+            font-size: 40px;
+            font-weight: 700;
+            text-align: center;
+            margin: 10px 0;
+            animation: glow 2s infinite;
+        }
+        .description {
+            font-size: 12px;
+            color: #a0b2c6;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px;
+            background-size: cover;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(69, 123, 157, 0.5);
+        }
+        .gauge-canvas {
+            width: 220px !important;
+            height: 220px !important;
+            margin: 0 auto;
+        }
+        .green { color: #00cc99; }
+        .yellow { color: #ffd60a; }
+        .red { color: #ef476f; }
+        .tooltip {
+            visibility: hidden;
+            width: 200px;
+            background: rgba(46, 64, 87, 0.9);
+            color: #e0e0e0;
+            text-align: center;
+            border-radius: 10px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+        .panel:hover .tooltip {
+            visibility: visible;
+        }
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px currentColor; }
+            50% { text-shadow: 0 0 15px currentColor; }
+            100% { text-shadow: 0 0 5px currentColor; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">Tier 1 AI Agents - Core Insights</div>
+        <div class="time-range">Last 7 Days</div>
+        <div class="row">
+            <div class="panel stat-panel">
+                <div class="icon" style="background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&h=50&q=80') center;"></div>
+                <div class="title">LandScout</div>
+                <div class="value green" id="landscout-value">15</div>
+                <div class="description">Deals Found This Week</div>
+                <span class="tooltip">Found 15 profitable land deals across 3 regions.</span>
+            </div>
+            <div class="panel stat-panel">
+                <div class="icon" style="background: url('https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&dpr=1') center;"></div>
+                <div class="title">LeadQual</div>
+                <div class="value green" id="leadqual-value">10</div>
+                <div class="description">Top Leads Scored</div>
+                <span class="tooltip">Scored 10 high-potential leads from 50 inquiries.</span>
+            </div>
+            <div class="panel gauge-panel">
+                <div class="title">PermitNav</div>
+                <canvas id="permitnav-gauge" class="gauge-canvas"></canvas>
+                <div class="description">Days Saved on Permits</div>
+                <span class="tooltip">Saved 8 days on 5 permit applications this week.</span>
+            </div>
+            <div class="panel gauge-panel">
+                <div class="title">SchedOpt</div>
+                <canvas id="schedopt-gauge" class="gauge-canvas"></canvas>
+                <div class="description">Days Saved on Schedules</div>
+                <span class="tooltip">Optimized 4 days across 3 construction projects.</span>
+            </div>
+            <div class="panel stat-panel">
+                <div class="icon" style="background: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&h=50&q=80') center;"></div>
+                <div class="title">DueDil</div>
+                <div class="value red" id="duedil-value">6</div>
+                <div class="description">Property Issues Flagged</div>
+                <span class="tooltip">Flagged 6 issues: 4 liens, 2 environmental risks.</span>
+            </div>
+            <div class="panel stat-panel">
+                <div class="icon" style="background: url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&h=50&q=80') center;"></div>
+                <div class="title">ContRev</div>
+                <div class="value yellow" id="contrev-value">4</div>
+                <div class="description">Contract Risks Found</div>
+                <span class="tooltip">Identified 4 risks in 2 contracts reviewed.</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gauge configuration function
+        function createGauge(ctx, value, max, thresholds) {
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [value, max - value],
+                        backgroundColor: [thresholds(value), 'rgba(255, 255, 255, 0.05)'],
+                        borderWidth: 0,
+                        circumference: 270,
+                        rotation: 225,
+                        borderRadius: 15
+                    }]
+                },
+                options: {
+                    cutout: '85%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false },
+                        title: {
+                            display: true,
+                            text: `${value}`,
+                            position: 'bottom',
+                            color: '#e0e0e0',
+                            font: { size: 30, weight: 'bold', family: 'Poppins' },
+                            padding: 15
+                        }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true
+                    }
+                }
+            });
+        }
+
+        // Threshold functions for color coding
+        const permitNavThreshold = (value) => {
+            if (value <= 10) return 'rgba(0, 204, 153, 0.9)';
+            if (value <= 20) return 'rgba(255, 214, 10, 0.9)';
+            return 'rgba(239, 71, 111, 0.9)';
+        };
+        const schedOptThreshold = (value) => {
+            if (value <= 5) return 'rgba(0, 204, 153, 0.9)';
+            if (value <= 10) return 'rgba(255, 214, 10, 0.9)';
+            return 'rgba(239, 71, 111, 0.9)';
+        };
+
+        // Initialize gauges with dummy data
+        const permitNavGauge = createGauge(
+            document.getElementById('permitnav-gauge').getContext('2d'),
+            8,  // Dummy value
+            30, // Max value
+            permitNavThreshold
+        );
+        const schedOptGauge = createGauge(
+            document.getElementById('schedopt-gauge').getContext('2d'),
+            4,  // Dummy value
+            15, // Max value
+            schedOptThreshold
+        );
+
+        // Simulate dynamic dummy data updates
+        setInterval(() => {
+            const values = {
+                landscout: Math.floor(Math.random() * 5) + 13, // 13-17
+                leadqual: Math.floor(Math.random() * 4) + 8,   // 8-11
+                duedil: Math.floor(Math.random() * 3) + 5,     // 5-7
+                contrev: Math.floor(Math.random() * 3) + 3     // 3-5
+            };
+            document.getElementById('landscout-value').textContent = values.landscout;
+            document.getElementById('leadqual-value').textContent = values.leadqual;
+            document.getElementById('duedil-value').textContent = values.duedil;
+            document.getElementById('contrev-value').textContent = values.contrev;
+        }, 4000); // Update every 4 seconds
+    </script>
+</body>
+</html>
